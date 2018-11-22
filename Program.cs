@@ -20,13 +20,15 @@ namespace EfPostgre
                 var queryModule = new QueryModule(ctx);
                 queryModule.showCategories();
                 //queryModule.queryProducts();
-                queryModule.AddProduct("2", "Квас", 25m, "25");
+                queryModule.AddProduct("2", "Квас", 25m, 15, "25");
                 queryModule.ListProducts();
 
                 Console.WriteLine("Increase result: " + queryModule.IncreaseProductPrice("Квас", 35m));
                 queryModule.ListProducts();
 
                 queryModule.JoinGroups();
+
+                queryModule.querySugar();
             }
 
             Console.ReadKey();

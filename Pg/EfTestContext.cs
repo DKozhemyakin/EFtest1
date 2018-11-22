@@ -61,13 +61,13 @@ namespace EfPostgre.Pg
             modelBuilder.Entity<Category>().HasData(
                 new
                 {
-                    CategoryID = "10",
+                    CategoryID = "1",
                     CategoryName = "Еда",
                     Description = "твердые продукты питания",
                     SortOrder = "0100"
                 }, new
                 {
-                    CategoryID = "20",
+                    CategoryID = "2",
                     CategoryName = "Питье",
                     Description = "жидкости",
                     SortOrder = "0100"

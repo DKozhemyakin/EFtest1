@@ -1,3 +1,5 @@
+using System.Collections;
+using static System.Console;
 namespace EfPostgre.Utils
 {
     public static class StringUtils
@@ -21,6 +23,12 @@ namespace EfPostgre.Utils
         {
             return string.IsNullOrEmpty(param);
         }
-        
+
+        public static void PrintToConsole<T>(T param) where T : IEnumerable
+        {
+            WriteLine("--------------------------------------");
+            foreach (var item in param)
+                WriteLine($"Item name: {item}");
+        }
     }
 }

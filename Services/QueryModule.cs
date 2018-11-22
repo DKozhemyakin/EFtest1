@@ -1,9 +1,9 @@
 using System.Linq;
 using EfPostgre.Pg;
 using EfPostgre.Pg.Model;
-using EfPostgre.Utils;
 using Microsoft.EntityFrameworkCore;
 using static System.Console;
+using static EfPostgre.Utils.StringUtils;
 
 namespace EfPostgre.Services
 {
@@ -44,7 +44,7 @@ namespace EfPostgre.Services
                     $"{item.ProductID}: {item.ProductName} costs {item.Cost:$#,##0.00} and has {item.Stock} units in stock.");
         }
 
-        public bool AddProduct(string categoryID, string productName, decimal? price, string productID = null)
+        public bool AddProduct(string categoryID, string productName, decimal? price, short? stock, string productID = null)
         {
             var newProduct = new Product
             {
@@ -52,7 +52,8 @@ namespace EfPostgre.Services
                 ProductID = productID,
                 CategoryID = categoryID,
                 ProductName = productName,
-                Cost = price
+                Cost = price,
+                Stock = stock
             };
             //пометить товар как отслеживаемый на предмет изменений
             dbContext.Products.Add(newProduct);
@@ -107,12 +108,50 @@ namespace EfPostgre.Services
                     c.CategoryName,
                     p.ProductName,
                     p.ProductID
-                });
+                }).OrderBy(cp => cp.ProductID);
 
             foreach (var item in queryJoin)
             {
                 WriteLine($"{item.ProductID}: {item.ProductName} is in { item.CategoryName}.");
             }
+
+            // группируем все товары по соответствующим категориям,
+            // чтобы вернуть восемь совпадений
+            var queryGroup = categories.GroupJoin(products,
+                category => category.CategoryID,
+                product => product.CategoryID,
+                (c, Products) => new {
+                    c.CategoryName,
+                    Products = Products.OrderBy(prod => prod.ProductName)
+                });
+            foreach (var item in queryGroup)
+            {
+                WriteLine($"{item.CategoryName} has { item.Products.Count()} products.");
+                foreach (var product in item.Products)
+                {
+                    WriteLine($" {product.ProductName}");
+                }
+            }
+
+            WriteLine("Products");
+            WriteLine($" Count:{ dbContext.Products.Count()}");
+            WriteLine($" Sum of units in stock:{ dbContext.Products.Sum(p => p.Stock):N0}");
+            WriteLine($" Average unit price:{ dbContext.Products.Average(p => p.Cost):$#,##0.00}");
+            WriteLine($" Value of units in stock:{dbContext.Products.Sum(p => p.Cost * p.Stock):$#,##0.00}");
+
+        }
+
+        public void querySugar()
+        {
+            var names = new string[] { "Michael", "Pam", "Jim", "Dwight", "Angela", "Klark", "Kevins", "Toby", "Creed" };
+            var query = names.Where(name => name.Length > 4).OrderBy(name => name.Length).ThenBy(name => name);
+            var query2 = from name in names where name.Length > 4 orderby name.Length, name select name;
+            var query3 = (from name in names where name.Length > 4 orderby name.Length, name select name).Skip(2).Take(1);
+
+
+            PrintToConsole(query);
+            PrintToConsole(query2);
+            PrintToConsole(query3);
         }
     }
 }
