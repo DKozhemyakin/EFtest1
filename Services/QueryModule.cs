@@ -1,6 +1,7 @@
 using System.Linq;
 using EfPostgre.Pg;
 using EfPostgre.Pg.Model;
+using EfPostgre.Utils;
 using Microsoft.EntityFrameworkCore;
 using static System.Console;
 
@@ -43,10 +44,12 @@ namespace EfPostgre.Services
                     $"{item.ProductID}: {item.ProductName} costs {item.Cost:$#,##0.00} and has {item.Stock} units in stock.");
         }
 
-        public bool AddProduct(string categoryID, string productName, decimal? price)
+        public bool AddProduct(string categoryID, string productName, decimal? price, string productID = null)
         {
             var newProduct = new Product
             {
+                //ProductID = ! productID.IsEmpty() ?  productID : null,
+                ProductID = productID,
                 CategoryID = categoryID,
                 ProductName = productName,
                 Cost = price
@@ -82,6 +85,33 @@ namespace EfPostgre.Services
                 ctx.Entry(updateProduct).State = EntityState.Modified;
                 var affected = ctx.SaveChanges();
                 return affected == 1;
+            }
+        }
+
+        public void JoinGroups()
+        {
+            // создаем две последовательности, которые хотим присоединить
+            var categories = dbContext.Categories.Select( c => new { c.CategoryID, c.CategoryName }).ToArray();
+            var products = dbContext.Products.Select(
+                p => new {
+                    p.ProductID,
+                    p.ProductName,
+                    p.CategoryID
+                }).ToArray();
+
+            // присоединяем каждый товар к своей категории
+            var queryJoin = categories.Join(products,
+                category => category.CategoryID,
+                product => product.CategoryID,
+                (c, p) => new {
+                    c.CategoryName,
+                    p.ProductName,
+                    p.ProductID
+                });
+
+            foreach (var item in queryJoin)
+            {
+                WriteLine($"{item.ProductID}: {item.ProductName} is in { item.CategoryName}.");
             }
         }
     }

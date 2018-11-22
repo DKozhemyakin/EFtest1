@@ -42,7 +42,7 @@ namespace EfPostgre.Pg
                 .HasMaxLength(40);
 
             // глобальный фильтр для удаления снятых с продажи товаров
-            modelBuilder.Entity<Product>().HasQueryFilter(p => !p.Discontinued);
+            //modelBuilder.Entity<Product>().HasQueryFilter(p => !p.Discontinued);
 
             SeedDbVersion(modelBuilder);
             SeedCategory(modelBuilder);
@@ -61,13 +61,13 @@ namespace EfPostgre.Pg
             modelBuilder.Entity<Category>().HasData(
                 new
                 {
-                    CategoryID = "1",
+                    CategoryID = "10",
                     CategoryName = "Еда",
                     Description = "твердые продукты питания",
                     SortOrder = "0100"
                 }, new
                 {
-                    CategoryID = "2",
+                    CategoryID = "20",
                     CategoryName = "Питье",
                     Description = "жидкости",
                     SortOrder = "0100"
@@ -79,7 +79,7 @@ namespace EfPostgre.Pg
             modelBuilder.Entity<Product>().HasData(
                 new
                 {
-                    ProductID = "1",
+                    ProductID = "10",
                     ProductName = "Хлеб",
                     Cost = (decimal)20,
                     Stock = (short)100,
@@ -87,7 +87,7 @@ namespace EfPostgre.Pg
                     CategoryID = "1"
                 }, new
                 {
-                    ProductID = "2",
+                    ProductID = "20",
                     ProductName = "Масло",
                     Cost = (decimal)100,
                     Stock = (short)500,
@@ -95,7 +95,7 @@ namespace EfPostgre.Pg
                     CategoryID = "1"
                 }, new
                 {
-                    ProductID = "3",
+                    ProductID = "30",
                     ProductName = "Пепси",
                     Cost = (decimal)50,
                     Stock = (short)150,
@@ -103,7 +103,7 @@ namespace EfPostgre.Pg
                     CategoryID = "2"
                 }, new
                 {
-                    ProductID = "4",
+                    ProductID = "40",
                     ProductName = "Кола",
                     Cost = (decimal)55,
                     Stock = (short)200,
@@ -111,7 +111,7 @@ namespace EfPostgre.Pg
                     CategoryID = "2"
                 }, new
                 {
-                    ProductID = "5",
+                    ProductID = "50",
                     ProductName = "Минералка",
                     Cost = (decimal)30,
                     Stock = (short)300,
